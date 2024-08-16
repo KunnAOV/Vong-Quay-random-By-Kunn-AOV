@@ -8,11 +8,12 @@
         body {
             font-family: Arial, sans-serif;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            background: linear-gradient(to right, #00b09b, #96c93d);
+            background-color: #e0e0e0;
         }
 
         .container {
@@ -21,55 +22,46 @@
 
         .wheel-wrapper {
             position: relative;
-            width: 300px;
-            height: 80px;
+            width: 200px;
+            height: 70px;
             overflow: hidden;
-            border: 3px solid #333;
-            border-radius: 10px;
+            border: 2px solid #333;
+            border-radius: 5px;
             background: #fff;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
 
         .wheel {
-            width: 300px;
-            height: auto;
+            width: 200px;
+            height: 70px;
             display: flex;
             flex-direction: column;
             transition: transform 4s cubic-bezier(0.17, 0.67, 0.83, 0.67);
-            transform-origin: top;
-            will-change: transform;
+            transform-origin: 0 0;
         }
 
         .wheel-item {
-            height: 80px;
-            line-height: 80px;
+            height: 70px;
+            line-height: 70px;
             text-align: center;
             border-bottom: 1px solid #ddd;
-            font-size: 18px;
-            background: #f9f9f9;
-            padding: 0 10px;
-            box-sizing: border-box;
-            flex-shrink: 0;
+            font-size: 16px;
+            background-color: #f0f0f0;
         }
 
         button {
-            padding: 15px 30px;
-            font-size: 18px;
+            padding: 10px 20px;
+            font-size: 16px;
             cursor: pointer;
             background-color: #333;
             color: #fff;
             border: none;
-            border-radius: 8px;
+            border-radius: 5px;
             margin-top: 20px;
-            transition: background-color 0.3s, transform 0.2s;
+            transition: background-color 0.3s;
         }
 
         button:hover {
             background-color: #555;
-        }
-
-        button:active {
-            transform: scale(0.95);
         }
 
         .modal {
@@ -86,63 +78,43 @@
 
         .modal-content {
             background: #fff;
-            padding: 30px;
+            padding: 20px;
             border-radius: 10px;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .modal-content h2 {
-            margin: 0 0 15px;
-            font-size: 24px;
-            color: #333;
+            margin: 0 0 10px;
         }
 
         .modal-content p {
-            font-size: 20px;
-            margin: 0 0 25px;
-            color: #666;
+            font-size: 18px;
+            margin: 0 0 20px;
         }
 
         .modal-content button {
             background-color: #333;
             color: #fff;
             border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
+            padding: 10px 20px;
+            border-radius: 5px;
             cursor: pointer;
         }
 
         .modal-content button:hover {
             background-color: #555;
         }
-
-        .history {
+        
+        a {
             margin-top: 20px;
-            text-align: left;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background: #fff;
-            max-height: 200px;
-            overflow-y: auto;
+            display: inline-block;
+            color: #333;
+            text-decoration: none;
         }
 
-        .history h3 {
-            margin: 0 0 10px;
-            font-size: 20px;
-        }
-
-        .history ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .history li {
-            font-size: 16px;
-            border-bottom: 1px solid #ddd;
-            padding: 5px 0;
+        a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -154,12 +126,9 @@
             </div>
         </div>
         <button onclick="spinWheel()">Quay Vòng</button>
-        <div class="history" id="history">
-            <h3>Lịch Sử Phần Thưởng</h3>
-            <ul id="history-list">
-                <!-- Lịch sử phần thưởng sẽ được thêm vào đây -->
-            </ul>
-        </div>
+        <input type="text" id="key-input" placeholder="Nhập key">
+        <button onclick="validateKey()">Xác Nhận Key</button>
+        <a href="https://kunnaov.github.io/key-manager/" target="_blank">Quản lý Key</a>
     </div>
     <div class="modal" id="modal">
         <div class="modal-content">
@@ -192,71 +161,50 @@
             'Krixi Tatsumaki SĐ', 'Val Xạ Thần SĐ', 'Lili Anh Đào SĐ', 'Rourke Bách Tướng SĐ', 'Mất Lượt 🌚'
         ];
 
+        // Populate wheel with prizes
         const wheel = document.getElementById('wheel');
-        const historyList = document.getElementById('history-list');
-        let lastRotation = 0;
-        let history = [];
+        prizes.forEach(prize => {
+            const div = document.createElement('div');
+            div.className = 'wheel-item';
+            div.textContent = prize;
+            wheel.appendChild(div);
+        });
 
-        function populateWheel() {
-            wheel.innerHTML = '';
-            prizes.forEach(prize => {
-                const item = document.createElement('div');
-                item.className = 'wheel-item';
-                item.textContent = prize;
-                wheel.appendChild(item);
-            });
-        }
-
+        // Spin wheel function
         function spinWheel() {
-            const totalItems = prizes.length;
-            const randomIndex = Math.floor(Math.random() * totalItems);
-            const itemHeight = 80; // Height of each prize item
-            const spins = 10; // Number of complete rotations before landing
-            const totalHeight = itemHeight * totalItems;
-            const angle = (360 * spins) + (totalHeight + (itemHeight * randomIndex));
-            
-            // Ensure that angle is always increasing for smooth rotation
-            lastRotation += angle;
-            wheel.style.transform = `translateY(-${lastRotation}px)`;
+            const randomIndex = Math.floor(Math.random() * prizes.length);
+            const spinDuration = 4000; // Duration of spin in milliseconds
 
-            // Set a delay to show the result after the spinning animation ends
+            // Rotate the wheel
+            wheel.style.transition = `transform ${spinDuration}ms cubic-bezier(0.17, 0.67, 0.83, 0.67)`;
+            wheel.style.transform = `rotate(${360 * 5 + randomIndex * (360 / prizes.length)}deg)`;
+
+            // Show the modal with the prize after spinning
             setTimeout(() => {
-                showModal(prizes[randomIndex]);
-                updateHistory(prizes[randomIndex]);
-                resetWheel();
-            }, 4000); // 4s for the spinning duration
-        }
-
-        function resetWheel() {
-            setTimeout(() => {
-                wheel.style.transition = 'none';
-                wheel.style.transform = 'translateY(0px)';
-                wheel.offsetHeight; // Trigger a reflow to restart transition
-                wheel.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.83, 0.67)';
-            }, 100);
-        }
-
-        function showModal(prize) {
-            const modal = document.getElementById('modal');
-            const modalMessage = document.getElementById('modal-message');
-            modalMessage.textContent = `Bạn đã trúng ${prize}.`;
-            modal.style.display = 'flex';
+                const prize = prizes[randomIndex];
+                document.getElementById('modal-message').textContent = `Bạn đã quay trúng: ${prize}`;
+                document.getElementById('modal').style.display = 'flex';
+            }, spinDuration); // Match this time with the spin duration
         }
 
         function closeModal() {
-            const modal = document.getElementById('modal');
-            modal.style.display = 'none';
+            document.getElementById('modal').style.display = 'none';
         }
 
-        function updateHistory(prize) {
-            history.unshift(prize); // Add the new prize to the beginning of the history
-            if (history.length > 10) {
-                history.pop(); // Remove the oldest prize if more than 10
+        function validateKey() {
+            const keyInput = document.getElementById('key-input').value.trim();
+            const validKeys = JSON.parse(localStorage.getItem('validKeys') || '[]');
+            const currentDate = new Date().toISOString().split('T')[0]; // Current date in YYYY-MM-DD format
+
+            const keyIsValid = validKeys.some(({ key, expiry }) => key === keyInput && expiry >= currentDate);
+
+            if (keyIsValid) {
+                alert('Key hợp lệ!');
+                // Allow spinning or other actions
+            } else {
+                alert('Key không hợp lệ hoặc đã hết hạn.');
             }
-            historyList.innerHTML = history.map(p => `<li>${p}</li>`).join('');
         }
-
-        populateWheel();
     </script>
 </body>
 </html>
