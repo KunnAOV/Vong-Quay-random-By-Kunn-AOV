@@ -16,7 +16,7 @@
             background-color: #e0e0e0;
         }
 
-        .container {
+        .container, .key-entry {
             text-align: center;
         }
 
@@ -28,6 +28,7 @@
             border: 2px solid #333;
             border-radius: 5px;
             background: #fff;
+            margin-top: 20px;
         }
 
         .wheel {
@@ -105,29 +106,22 @@
         .modal-content button:hover {
             background-color: #555;
         }
-        
-        a {
-            margin-top: 20px;
-            display: inline-block;
-            color: #333;
-            text-decoration: none;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div id="key-entry" class="key-entry">
+        <h1>Nhập Key Để Truy Cập Vòng Quay</h1>
+        <input type="text" id="key-input" placeholder="Nhập key">
+        <button onclick="validateKey()">Xác Nhận Key</button>
+        <p id="error-message" style="color: red;"></p>
+    </div>
+    <div id="wheel-container" class="container" style="display: none;">
         <div class="wheel-wrapper">
             <div class="wheel" id="wheel">
                 <!-- Các giải thưởng sẽ được thêm vào đây -->
             </div>
         </div>
         <button onclick="spinWheel()">Quay Vòng</button>
-        <input type="text" id="key-input" placeholder="Nhập key">
-        <button onclick="validateKey()">Xác Nhận Key</button>
         <a href="https://kunnaov.github.io/key-manager/" target="_blank">Quản lý Key</a>
     </div>
     <div class="modal" id="modal">
@@ -138,6 +132,24 @@
         </div>
     </div>
     <script>
+        // Function to validate key
+        function validateKey() {
+            const keyInput = document.getElementById('key-input').value.trim();
+            const errorMessage = document.getElementById('error-message');
+            const validKeys = JSON.parse(localStorage.getItem('validKeys') || '[]');
+            const currentDate = new Date().toISOString().split('T')[0]; // Current date in YYYY-MM-DD format
+
+            const keyIsValid = validKeys.some(({ key, expiry }) => key === keyInput && expiry >= currentDate);
+
+            if (keyIsValid) {
+                document.getElementById('key-entry').style.display = 'none';
+                document.getElementById('wheel-container').style.display = 'block';
+                errorMessage.textContent = '';
+            } else {
+                errorMessage.textContent = 'Key không hợp lệ hoặc đã hết hạn.';
+            }
+        }
+
         const prizes = [
             'Triêụ Vân KSTT SĐ', 'Nak TNVT SĐ', 'YeNa HCT SĐ', 'But PCT SĐ', 'Allain TSSK SĐ',
             'Veres Kimono SĐ', 'Bijan HKCG SĐ', 'Nak LQS SĐ', 'Elsu TTPH SĐ', 'Nata NHYH SĐ',
@@ -160,7 +172,6 @@
             'Xeniel Tận Thế SĐ', 'Nata Phú Quý SĐ', 'Maloch Dạ Ưng SĐ', 'But Kim Ngư SĐ', 'Alice Quân Nhạc SĐ',
             'Krixi Tatsumaki SĐ', 'Val Xạ Thần SĐ', 'Lili Anh Đào SĐ', 'Rourke Bách Tướng SĐ', 'Mất Lượt 🌚'
         ];
-
         // Populate wheel with prizes
         const wheel = document.getElementById('wheel');
         prizes.forEach(prize => {
@@ -189,21 +200,6 @@
 
         function closeModal() {
             document.getElementById('modal').style.display = 'none';
-        }
-
-        function validateKey() {
-            const keyInput = document.getElementById('key-input').value.trim();
-            const validKeys = JSON.parse(localStorage.getItem('validKeys') || '[]');
-            const currentDate = new Date().toISOString().split('T')[0]; // Current date in YYYY-MM-DD format
-
-            const keyIsValid = validKeys.some(({ key, expiry }) => key === keyInput && expiry >= currentDate);
-
-            if (keyIsValid) {
-                alert('Key hợp lệ!');
-                // Allow spinning or other actions
-            } else {
-                alert('Key không hợp lệ hoặc đã hết hạn.');
-            }
         }
     </script>
 </body>
