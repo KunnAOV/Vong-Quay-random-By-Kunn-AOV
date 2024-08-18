@@ -8,61 +8,68 @@
         body {
             font-family: Arial, sans-serif;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #e0e0e0;
+            background: linear-gradient(45deg, #00b09b, #96c93d, #ff0000, #ff7f00, #00b09b, #ff0000, #96c93d, #ff7f00);
         }
 
-        .container, .key-entry {
+        .container {
             text-align: center;
         }
 
         .wheel-wrapper {
             position: relative;
-            width: 200px;
-            height: 70px;
+            width: 300px;
+            height: 80px;
             overflow: hidden;
-            border: 2px solid #333;
-            border-radius: 5px;
+            border: 3px solid #333;
+            border-radius: 10px;
             background: #fff;
-            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
         }
 
         .wheel {
-            width: 200px;
-            height: 70px;
+            width: 300px;
+            height: auto;
             display: flex;
             flex-direction: column;
             transition: transform 4s cubic-bezier(0.17, 0.67, 0.83, 0.67);
-            transform-origin: 0 0;
+            transform-origin: top;
+            will-change: transform;
         }
 
         .wheel-item {
-            height: 70px;
-            line-height: 70px;
+            height: 80px;
+            line-height: 80px;
             text-align: center;
             border-bottom: 1px solid #ddd;
-            font-size: 16px;
-            background-color: #f0f0f0;
+            font-size: 18px;
+            background: #f9f9f9;
+            padding: 0 10px;
+            box-sizing: border-box;
+            flex-shrink: 0;
         }
 
         button {
-            padding: 10px 20px;
-            font-size: 16px;
+            padding: 15px 30px;
+            font-size: 18px;
             cursor: pointer;
             background-color: #333;
             color: #fff;
             border: none;
-            border-radius: 5px;
-            margin-top: 20px;
-            transition: background-color 0.3s;
+            border-radius: 8px;
+            transition: background-color 0.3s, transform 0.2s;
         }
 
         button:hover {
             background-color: #555;
+        }
+
+        button:active {
+            transform: scale(0.95);
         }
 
         .modal {
@@ -79,128 +86,280 @@
 
         .modal-content {
             background: #fff;
-            padding: 20px;
+            padding: 30px;
             border-radius: 10px;
             text-align: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
 
         .modal-content h2 {
-            margin: 0 0 10px;
+            margin: 0 0 15px;
+            font-size: 24px;
+            color: #333;
         }
 
         .modal-content p {
-            font-size: 18px;
-            margin: 0 0 20px;
+            font-size: 20px;
+            margin: 0 0 25px;
+            color: #666;
         }
 
         .modal-content button {
             background-color: #333;
             color: #fff;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 12px 25px;
+            border-radius: 8px;
             cursor: pointer;
         }
 
         .modal-content button:hover {
             background-color: #555;
         }
+
+        .history {
+            margin-top: 20px;
+            text-align: left;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fff;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .history h3 {
+            margin: 0 0 10px;
+            font-size: 20px;
+        }
+
+        .history ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .history li {
+            font-size: 16px;
+            border-bottom: 1px solid #ddd;
+            padding: 5px 0;
+        }
+
+        .key-input {
+            margin-bottom: 20px;
+        }
+
+        .key-input input {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: 200px;
+        }
+
+        .key-input button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            margin-left: 10px;
+        }
+
+        .key-input button:hover {
+            background-color: #555;
+        }
+        
+        .welcome-modal {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        }
+
+        .welcome-modal-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .welcome-modal-content h2 {
+            margin: 0 0 10px;
+        }
+
+        .welcome-modal-content p {
+            font-size: 18px;
+            margin: 0 0 20px;
+        }
     </style>
 </head>
 <body>
-    <div id="key-entry" class="key-entry">
-        <h1>Nhập Key Để Truy Cập Vòng Quay</h1>
-        <input type="text" id="key-input" placeholder="Nhập key">
-        <button onclick="validateKey()">Xác Nhận Key</button>
-        <p id="error-message" style="color: red;"></p>
-    </div>
-    <div id="wheel-container" class="container" style="display: none;">
-        <div class="wheel-wrapper">
+    <div class="container">
+        <!-- Welcome modal -->
+        <div class="welcome-modal" id="welcome-modal">
+            <div class="welcome-modal-content">
+                <h2>Chào Mừng!</h2>
+                <p>Chào mừng bạn đến với vòng quay may mắn Kunn AOV. Hãy nhập key để bắt đầu.</p>
+                <p>Lưu ý: khi quay sẽ có tỉ lệ không trúng nhé ♥️</p>
+                <button onclick="closeWelcomeModal()">Bắt Đầu</button>
+            </div>
+        </div>
+
+    <div class="container">
+        <div class="key-input">
+            <input type="text" id="key" placeholder="Nhập Key">
+            <button onclick="validateKey()">Xác Nhận Key</button>
+        </div>
+        <div class="wheel-wrapper" id="wheel-wrapper">
             <div class="wheel" id="wheel">
                 <!-- Các giải thưởng sẽ được thêm vào đây -->
             </div>
         </div>
-        <button onclick="spinWheel()">Quay Vòng</button>
-        <a href="https://kunnaov.github.io/key-manager/" target="_blank">Quản lý Key</a>
+        <button onclick="spinWheel()" id="spin-button" style="display: none;">Quay Vòng</button>
+        <div class="history" id="history">
+            <h3>Lịch Sử Phần Thưởng</h3>
+            <ul id="history-list">
+                <!-- Lịch sử phần thưởng sẽ được thêm vào đây -->
+            </ul>
+        </div>
     </div>
     <div class="modal" id="modal">
         <div class="modal-content">
             <h2>Chúc mừng!</h2>
             <p id="modal-message"></p>
             <button onclick="closeModal()">Đóng</button>
+            <button id="prize-link-button" style="display: none;" onclick="openPrizeLink()">Nhận Thưởng</button>
         </div>
     </div>
     <script>
-        // Function to validate key
+        const prizes = [
+            { name: 'Triêụ Vân KSTT SĐ', link: 'https://www.mediafire.com/file/8pxwtzla6wrkkpo/Triệu+Vân+Kỵ+sĩ+tận+thế+[Kunn_AOV].zip/file' },
+            { name: 'Nak TNVT SĐ', link: 'https://www.mediafire.com/file/hihpiq3r2qjgp03/Nakroth+Thứ+nguyên+vệ+thần+[Kunn_AOV].zip/file' },
+            { name: 'YeNa HCT SĐ', link: 'https://www.mediafire.com/file/h7vmk2sps5v5js5/Yena+Huyền+Cửu+Thiên+[Kunn_AOV].zip/file' },
+            { name: 'But PCT SĐ', link: 'https://www.mediafire.com/file/k8rmez7ipvy23pz/Butterfly+Phượng+cửu+thiên+[Kunn_AOV].zip/file' },
+            { name: 'Allain TSSK SĐ', link: 'https://www.mediafire.com/file/ond3shy8oljhk5g/Allain+Tuyết+sơn+song+kiếm+[Kunn_AOV].zip/file' },
+            { name: 'Chúc Bạn May Mắn Lần Sau 🌚', link: 'https://example.com/prize100' },
+            { name: 'Yan Tanjiro SĐ', link: 'https://www.mediafire.com/file/hpnj9ykd5p3wu23/Yan+Tanjiro+Kamado+Sáng+Đậm.zip/file' },
+            { name: 'Flo GSTH SĐ', link: 'https://www.mediafire.com/file/vsub3tdr3tjy5yb/Florentino+Giám+sát+tinh+Hệ+[Kunn_AOV].zip/file' },
+            { name: 'Allain Kirito SĐ', link: 'https://www.mediafire.com/file/10d4volfhdpggh4/Allain+Kirito+[Kunn_AOV].zip/file' },
+            { name: 'Nak BDCT SĐ', link: 'https://www.mediafire.com/file/vbpl0phnuzwd4qh/Nakroth+Bạch+Diện+chiến+thương+[Kunn_AOV].zip/file' },
+            { name: 'Mu Zenitsu SĐ', link: 'https://www.mediafire.com/file/q4uhbc8szawglfc/Murad+Zenitsu+Agatsuma+[Kunn_AOV].zip/file' },
+            { name: 'Chúc Bạn May Mắn Lần Sau 🌚', link: 'https://example.com/prize100' },
+            { name: 'Quillen NTLĐ SĐ', link: 'https://www.mediafire.com/file/01ni2ivslht48z7/Quillen+Nghịch+Thiên+long+đế+[Kunn_AOV].zip/file' },
+            { name: 'Airi TNVT SĐ', link: 'https://www.mediafire.com/file/baqvzwxcs0h624k/Airi_Th%25E1%25BB%25A9_nguy%25C3%25AAn_V%25E1%25BB%2587_th%25E1%25BA%25A7n_%255BKunn_AOV%255D.zip/file' },
+            { name: 'Bijan KTLK SĐ', link: 'https://www.mediafire.com/file/lvknhsywirda83p/Bijan+Kình+thiên+Long+Kỵ+[Kunn_AOV].zip/file' },
+            { name: 'Arduin BVCG SĐ', link: 'https://www.mediafire.com/file/xkzidevgtksbpua/Arduin+Bạch+vệ+chiến+giáp+[Kunn_AOV].zip/file' },
+            { name: 'Aoi Dạ Ưng SĐ', link: 'https://www.mediafire.com/file/3ds0axhk4hsysrq/Aoi+Sát+thủ+Dạ+Ưng+[Kunn_AOV].zip/file' },
+            { name: 'Chúc Bạn May Mắn Lần Sau 🌚', link: 'https://example.com/prize100' },
+            { name: 'Aoi Mafia SĐ', link: 'https://www.mediafire.com/file/v1jg6v227nhpstb/Aoi+Tiểu+thư+Mafia+[Kunn_AOV].zip/file' },
+            { name: 'Alice Quân Nhạc SĐ', link: 'https://www.mediafire.com/file/5nrx104u5ea5ohj/Alice+Quân+nhạc+Athanor+[Kunn_AOV].zip/file' },
+            // Add all 100 prizes with unique links here
+            { name: 'Mất Lượt 🌚', link: 'https://example.com/prize100' }
+        ];
+
+        const keys = Array.from({ length: 100 }, (_, i) => `KunnAOV${i + 1}`);
+        const usedKeys = new Set();
+        const wheel = document.getElementById('wheel');
+        const historyList = document.getElementById('history-list');
+        let lastRotation = 0;
+        let history = [];
+        let prizeLink = '';
+
+        function populateWheel() {
+            wheel.innerHTML = '';
+            prizes.forEach(prize => {
+                const item = document.createElement('div');
+                item.className = 'wheel-item';
+                item.textContent = prize.name;
+                wheel.appendChild(item);
+            });
+        }
+        
+        function closeWelcomeModal() {
+            document.getElementById('welcome-modal').style.display = 'none';
+            document.getElementById('main-content').style.visibility = 'visible';
+        }
+
         function validateKey() {
-            const keyInput = document.getElementById('key-input').value.trim();
-            const errorMessage = document.getElementById('error-message');
-            const validKeys = JSON.parse(localStorage.getItem('validKeys') || '[]');
-            const currentDate = new Date().toISOString().split('T')[0]; // Current date in YYYY-MM-DD format
-
-            const keyIsValid = validKeys.some(({ key, expiry }) => key === keyInput && expiry >= currentDate);
-
-            if (keyIsValid) {
-                document.getElementById('key-entry').style.display = 'none';
-                document.getElementById('wheel-container').style.display = 'block';
-                errorMessage.textContent = '';
+            const key = document.getElementById('key').value;
+            if (keys.includes(key) && !usedKeys.has(key)) {
+                usedKeys.add(key);
+                document.getElementById('spin-button').style.display = 'inline-block';
+                document.querySelector('.key-input').style.display = 'none';
             } else {
-                errorMessage.textContent = 'Key không hợp lệ hoặc đã hết hạn.';
+                alert('Key sai hoặc đã được sử dụng. Vui lòng kiểm tra lại.');
             }
         }
 
-        const prizes = [
-            'Triêụ Vân KSTT SĐ', 'Nak TNVT SĐ', 'YeNa HCT SĐ', 'But PCT SĐ', 'Allain TSSK SĐ',
-            'Veres Kimono SĐ', 'Bijan HKCG SĐ', 'Nak LQS SĐ', 'Elsu TTPH SĐ', 'Nata NHYH SĐ',
-            'Allain Kirito SĐ', 'But Stacia SĐ', 'Zuka MH SĐ', 'Nak BDCT SĐ', 'Violet TNVT SĐ',
-            'Mu TTTB SĐ', 'Flo GSTH SĐ', 'Zephys SV SĐ', 'Bright Toshiro SĐ', 'Yan Tanjiro SĐ',
-            'Mu Zenitsu SĐ', 'Flo Seven SĐ', 'Ryoma Samurai HT SĐ', 'Mu Kuchiki SĐ', 'Lubu CTLT SĐ',
-            'Raz Muay Thái SĐ', 'Ilum KHTH SĐ', 'Hayate TTVT SĐ', 'Val ĐNTT SĐ', 'Raz Bảo Vũ SĐ',
-            'Zata S-Dreamer SĐ', 'Airi TNVT SĐ', 'Quillen NTLD SĐ', 'Bijan KTLK SĐ', 'Tulen Chí Tôn SĐ',
-            'Veres Lưu Ly SĐ', 'Zata Tà Phượng SĐ', 'WuKong TGXD SĐ', 'Nak Killua SĐ', 'Lili Wave SĐ',
-            'Tulen Thần Sứ SĐ', 'Ryoma Ultraman SĐ', 'Flo Thần Long SĐ', 'Errol Genos SĐ', 'Laville Xạ Thần SĐ',
-            'Keera Nezuko SĐ', 'Mina LXYV SĐ', 'Arduin BVCG SĐ', 'Mu Chí Tôn SĐ', 'Paine TXBT SĐ',
-            'Lau Miêu Ảnh SĐ', 'Ryoma Maple Frost SĐ', 'WuKong Tề Thiên SĐ', 'Cresht Bách Tướng SĐ', 'Fennik PTTX SĐ',
-            'Enzo STBH SĐ', 'Elsu Tận Thế SĐ', 'Tel Yêu Hồ SĐ', 'Omen Tận Thế SĐ', 'Cap Kimono SĐ',
-            'EnZo Kurapika SĐ', 'Yena Wave SĐ', 'Điêu Thuyền Wave SĐ', 'Zill Tu La SĐ', 'Ilum Thiên Ngư SĐ',
-            'Hayate Dạ Ưng SĐ', 'Nak Siêu Việt SĐ', 'LuBu Ichigo SĐ', 'Vio Tỷ Tỷ SĐ', 'Yorn LTS SĐ',
-            'Veera A.I Love You SĐ', 'Gildur Xích Long SĐ', 'Charlotte Hexsword SĐ', 'Cap Harley Quinn SĐ', 'Sephera BNNL SĐ',
-            'Aoi Mafia SĐ', 'Sinestrea Wave SĐ', 'Aya Cầu Vồng SĐ', 'Erin Cổ Tích SĐ', 'Điêu Thuyền Thất Tịch SĐ',
-            'Yue Hoả Diệm SĐ', 'Aoi Dạ Ưng SĐ', 'Lavi Moba', 'Dirak Trăg Khuyết SĐ', 'Lili Thần Long SĐ',
-            'Omen Huyết Ảnh SĐ', 'Astrid Thần Trí Tuệ SĐ', 'Elsu Chu Tước SĐ', 'Rouie Thanh Long SĐ', 'Elando\'rr Tuxedo SĐ',
-            'Xeniel Tận Thế SĐ', 'Nata Phú Quý SĐ', 'Maloch Dạ Ưng SĐ', 'But Kim Ngư SĐ', 'Alice Quân Nhạc SĐ',
-            'Krixi Tatsumaki SĐ', 'Val Xạ Thần SĐ', 'Lili Anh Đào SĐ', 'Rourke Bách Tướng SĐ', 'Mất Lượt 🌚'
-        ];
-        // Populate wheel with prizes
-        const wheel = document.getElementById('wheel');
-        prizes.forEach(prize => {
-            const div = document.createElement('div');
-            div.className = 'wheel-item';
-            div.textContent = prize;
-            wheel.appendChild(div);
-        });
-
-        // Spin wheel function
         function spinWheel() {
-            const randomIndex = Math.floor(Math.random() * prizes.length);
-            const spinDuration = 4000; // Duration of spin in milliseconds
+            const totalItems = prizes.length;
+            const randomIndex = Math.floor(Math.random() * totalItems);
+            const itemHeight = 80; // Height of each prize item
+            const spins = 10; // Number of complete rotations before landing
+            const totalHeight = itemHeight * totalItems;
+            const angle = (360 * spins) + (totalHeight + (itemHeight * randomIndex));
+            
+            // Ensure that angle is always increasing for smooth rotation
+            lastRotation += angle;
+            wheel.style.transform = `translateY(-${lastRotation}px)`;
 
-            // Rotate the wheel
-            wheel.style.transition = `transform ${spinDuration}ms cubic-bezier(0.17, 0.67, 0.83, 0.67)`;
-            wheel.style.transform = `rotate(${360 * 5 + randomIndex * (360 / prizes.length)}deg)`;
-
-            // Show the modal with the prize after spinning
+            // Set a delay to show the result after the spinning animation ends
             setTimeout(() => {
-                const prize = prizes[randomIndex];
-                document.getElementById('modal-message').textContent = `Bạn đã quay trúng: ${prize}`;
-                document.getElementById('modal').style.display = 'flex';
-            }, spinDuration); // Match this time with the spin duration
+                prizeLink = prizes[randomIndex].link;
+                showModal(prizes[randomIndex].name);
+                updateHistory(prizes[randomIndex].name);
+                resetWheel();
+                document.getElementById('spin-button').style.display = 'none';
+                document.querySelector('.key-input').style.display = 'block';
+            }, 4000); // 4s for the spinning duration
+        }
+
+        function resetWheel() {
+            setTimeout(() => {
+                wheel.style.transition = 'none';
+                wheel.style.transform = 'translateY(0px)';
+                wheel.offsetHeight; // Trigger a reflow to restart transition
+                wheel.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.83, 0.67)';
+                lastRotation = 0; // Reset rotation for next spin
+            }, 500); // Delay for wheel reset
+        }
+
+        function showModal(prize) {
+            const modal = document.getElementById('modal');
+            const modalMessage = document.getElementById('modal-message');
+            modalMessage.textContent = `Bạn đã trúng ${prize}.`;
+            document.getElementById('prize-link-button').style.display = 'inline-block';
+            modal.style.display = 'flex';
         }
 
         function closeModal() {
-            document.getElementById('modal').style.display = 'none';
+            const modal = document.getElementById('modal');
+            modal.style.display = 'none';
         }
+
+        function openPrizeLink() {
+            window.location.href = prizeLink;
+        }
+
+        function updateHistory(prize) {
+            history.unshift(prize); // Add the new prize to the beginning of the history
+            if (history.length > 10) {
+                history.pop(); // Remove the oldest prize if more than 10
+            }
+            historyList.innerHTML = history.map(p => `<li>${p}</li>`).join('');
+        }
+
+        populateWheel();
     </script>
 </body>
 </html>
